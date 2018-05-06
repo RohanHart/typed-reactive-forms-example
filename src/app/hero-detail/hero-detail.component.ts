@@ -1,8 +1,15 @@
-import { Component, Input, OnChanges }       from '@angular/core';
-import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { Component, Input, OnChanges } from '@angular/core';
+import { FormArray, FormBuilder, FormGroup } from 'ngx-strongly-typed-forms';
 
 import { Address, Hero, states } from '../data-model';
-import { HeroService }           from '../hero.service';
+import { HeroService } from '../hero.service';
+
+interface HeroFormModel {
+  name: string;
+  secretLairs: Address[];
+  power: string;
+  sidekick: string;
+}
 
 @Component({
   selector: 'app-hero-detail',
@@ -13,22 +20,21 @@ import { HeroService }           from '../hero.service';
 export class HeroDetailComponent implements OnChanges {
   @Input() hero: Hero;
 
-  heroForm: FormGroup;
+  heroForm: FormGroup<HeroFormModel>;
   nameChangeLog: string[] = [];
   states = states;
 
-  constructor(
-    private fb: FormBuilder,
-    private heroService: HeroService) {
+  constructor(private fb: FormBuilder,
+              private heroService: HeroService) {
 
     this.createForm();
     this.logNameChange();
   }
 
   createForm() {
-    this.heroForm = this.fb.group({
+    this.heroForm = this.fb.group<HeroFormModel>({
       name: '',
-      secretLairs: this.fb.array([]),
+      secretLairs: this.fb.array<Address>([]),
       power: '',
       sidekick: ''
     });
@@ -45,13 +51,13 @@ export class HeroDetailComponent implements OnChanges {
     this.setAddresses(this.hero.addresses);
   }
 
-  get secretLairs(): FormArray {
-    return this.heroForm.get('secretLairs') as FormArray;
-  };
+  get secretLairs(): FormArray<Address> {
+    return this.heroForm.get('secretLairs') as FormArray<Address>;
+  }
 
   setAddresses(addresses: Address[]) {
-    const addressFGs = addresses.map(address => this.fb.group(address));
-    const addressFormArray = this.fb.array(addressFGs);
+    const addressFGs = addresses.map(address => this.fb.group<Address>(address));
+    const addressFormArray = this.fb.array<Address>(addressFGs);
     this.heroForm.setControl('secretLairs', addressFormArray);
   }
 
@@ -77,14 +83,16 @@ export class HeroDetailComponent implements OnChanges {
     // and deep copies of changed form model values
     const saveHero: Hero = {
       id: this.hero.id,
-      name: formModel.name as string,
+      name: formModel.name,
       // addresses: formModel.secretLairs // <-- bad!
       addresses: secretLairsDeepCopy
     };
     return saveHero;
   }
 
-  revert() { this.rebuildForm(); }
+  revert() {
+    this.rebuildForm();
+  }
 
   logNameChange() {
     const nameControl = this.heroForm.get('name');

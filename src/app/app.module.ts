@@ -1,6 +1,7 @@
 import { NgModule }            from '@angular/core';
 import { BrowserModule }       from '@angular/platform-browser';
 import { ReactiveFormsModule } from '@angular/forms';  // <-- #1 import module
+import { FormBuilder }         from 'ngx-strongly-typed-forms';
 
 import { AppComponent }        from './app.component';
 import { HeroDetailComponent } from './hero-detail/hero-detail.component';
@@ -25,7 +26,7 @@ import { HeroService }         from './hero.service';
     HeroDetailComponent,
     HeroListComponent // <-- export HeroListComponent
   ],
-  providers: [ HeroService ], // <-- provide HeroService
+  providers: [ HeroService, FormBuilder ], // <-- provide HeroService
   bootstrap: [ AppComponent ]
 })
 export class AppModule { }
