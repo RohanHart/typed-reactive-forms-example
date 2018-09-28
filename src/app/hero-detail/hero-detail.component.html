@@ -11,6 +11,7 @@
       <label class="center-block">Name:
         <input class="form-control" formControlName="name">
       </label>
+    <div *ngIf="heroForm?.errors?.nameValidation">Name must contain Power</div>
   </div>
 
   <div formArrayName="secretLairs" class="well well-lg">
