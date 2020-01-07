@@ -1,8 +1,8 @@
-import { Component, Input, OnChanges } from "@angular/core";
-import { AbstractControl, FormArray, FormBuilder, FormGroup } from "ngx-strongly-typed-forms";
+import { Component, Input, OnChanges } from '@angular/core';
+import { AbstractControl, FormArray, FormBuilder, FormGroup } from 'ngx-strongly-typed-forms';
 
-import { Address, Hero, states } from "../data-model";
-import { HeroService } from "../hero.service";
+import { Address, Hero, states } from '../data-model';
+import { HeroService } from '../hero.service';
 
 interface HeroFormModel {
   name: string;
@@ -12,17 +12,17 @@ interface HeroFormModel {
 }
 
 function nameIncludesPowerValidator(control: AbstractControl<HeroFormModel>) {
-  const {name, power} = control.value;
-  if (name && power && !new RegExp(power, "i").test(name)) {
-    return {nameValidation: "Name does not contain Power"};
+  const { name, power } = control.value;
+  if (name && power && !new RegExp(power, 'i').test(name)) {
+    return { nameValidation: 'Name does not contain Power' };
   }
   return null;
 }
 
 @Component({
-  selector: "app-hero-detail",
-  templateUrl: "./hero-detail.component.html",
-  styleUrls: ["./hero-detail.component.css"]
+  selector: 'app-hero-detail',
+  templateUrl: './hero-detail.component.html',
+  styleUrls: ['./hero-detail.component.css']
 })
 
 export class HeroDetailComponent implements OnChanges {
@@ -33,7 +33,7 @@ export class HeroDetailComponent implements OnChanges {
   states = states;
 
   constructor(private fb: FormBuilder,
-              private heroService: HeroService) {
+    private heroService: HeroService) {
 
     this.createForm();
     this.logNameChange();
@@ -41,11 +41,11 @@ export class HeroDetailComponent implements OnChanges {
 
   createForm() {
     this.heroForm = this.fb.group<HeroFormModel>({
-        name: "",
-        secretLairs: this.fb.array<Address>([]),
-        power: "",
-        sidekick: ""
-      },
+      name: '',
+      secretLairs: this.fb.array<Address>([]),
+      power: '',
+      sidekick: ''
+    },
       // {validator: nameIncludesPowerValidator}
     );
   }
@@ -62,13 +62,13 @@ export class HeroDetailComponent implements OnChanges {
   }
 
   get secretLairs(): FormArray<Address> {
-    return this.heroForm.get("secretLairs") as FormArray<Address>;
+    return this.heroForm.get('secretLairs') as FormArray<Address>;
   }
 
   setAddresses(addresses: Address[]) {
     const addressFGs = addresses.map(address => this.fb.group<Address>(address));
     const addressFormArray = this.fb.array<Address>(addressFGs);
-    this.heroForm.setControl("secretLairs", addressFormArray);
+    this.heroForm.setControl('secretLairs', addressFormArray);
   }
 
   addLair() {
@@ -105,7 +105,7 @@ export class HeroDetailComponent implements OnChanges {
   }
 
   logNameChange() {
-    const nameControl = this.heroForm.get("name");
+    const nameControl = this.heroForm.get('name');
     nameControl.valueChanges.forEach(
       (value: string) => this.nameChangeLog.push(value)
     );

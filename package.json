@@ -7,7 +7,7 @@
     "build": "ng build --prod",
     "start": "ng serve",
     "test": "ng test",
-    "lint": "ng lint -t verbose",
+    "lint": "ng lint --format=verbose",
     "e2e": "ng e2e"
   },
   "keywords": [],
