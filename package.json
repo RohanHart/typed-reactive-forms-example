@@ -7,7 +7,7 @@
     "build": "ng build --prod",
     "start": "ng serve",
     "test": "ng test",
-    "lint": "tslint ./src/**/*.ts -t verbose",
+    "lint": "ng lint -t verbose",
     "e2e": "ng e2e"
   },
   "keywords": [],
@@ -33,7 +33,8 @@
     "zone.js": "^0.8.4"
   },
   "devDependencies": {
-    "@angular/cli": "^1.7.4",
+    "@angular-devkit/build-angular": "~0.8.0",
+    "@angular/cli": "^6.2.9",
     "@types/jasmine": "~2.8.0",
     "@types/jasminewd2": "^2.0.3",
     "@types/node": "^6.0.45",
