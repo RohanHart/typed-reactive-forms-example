@@ -1,5 +1,5 @@
 import { Component, Input, OnChanges } from '@angular/core';
-import { AbstractControl, FormArray, FormBuilder, FormGroup } from 'ngx-strongly-typed-forms';
+import { AbstractControl, FormBuilder } from 'ngx-strongly-typed-forms';
 
 import { Address, Hero, states } from '../data-model';
 import { HeroService } from '../hero.service';
@@ -28,26 +28,25 @@ function nameIncludesPowerValidator(control: AbstractControl<HeroFormModel>) {
 export class HeroDetailComponent implements OnChanges {
   @Input() hero: Hero;
 
-  heroForm: FormGroup<HeroFormModel>;
+  readonly heroForm = this.fb.group({
+    name: this.fb.control(''),
+    // need to prepopulate the array so that the type inference has something to work on
+    secretLairs: this.fb.array([this.addressControls(new Address())]),
+    power: this.fb.control(''),
+    sidekick: this.fb.control('')
+  },
+    // {validator: nameIncludesPowerValidator}
+  );
+  readonly secretLairs = this.heroForm.controls.secretLairs;
+
   nameChangeLog: string[] = [];
   states = states;
 
   constructor(private fb: FormBuilder,
     private heroService: HeroService) {
-
-    this.createForm();
+    // clean up the lair added for type inference
+    this.secretLairs.clear();
     this.logNameChange();
-  }
-
-  createForm() {
-    this.heroForm = this.fb.group<HeroFormModel>({
-      name: '',
-      secretLairs: this.fb.array<Address>([]),
-      power: '',
-      sidekick: ''
-    },
-      // {validator: nameIncludesPowerValidator}
-    );
   }
 
   ngOnChanges() {
@@ -61,18 +60,24 @@ export class HeroDetailComponent implements OnChanges {
     this.setAddresses(this.hero.addresses);
   }
 
-  get secretLairs(): FormArray<Address> {
-    return this.heroForm.get('secretLairs') as FormArray<Address>;
-  }
-
   setAddresses(addresses: Address[]) {
-    const addressFGs = addresses.map(address => this.fb.group<Address>(address));
-    const addressFormArray = this.fb.array<Address>(addressFGs);
-    this.heroForm.setControl('secretLairs', addressFormArray);
+    this.secretLairs.clear();
+    addresses.forEach(this.addLair.bind(this));
   }
 
-  addLair() {
-    this.secretLairs.push(this.fb.group(new Address()));
+  addLair(address = new Address()) {
+    this.secretLairs.push(this.addressControls(address));
+  }
+
+  private addressControls(address: Address) {
+    const controls = this.fb.group({
+      street: this.fb.control(''),
+      city: this.fb.control(''),
+      state: this.fb.control(''),
+      zip: this.fb.control(''),
+    });
+    controls.setValue(address);
+    return controls;
   }
 
   onSubmit() {
@@ -107,7 +112,7 @@ export class HeroDetailComponent implements OnChanges {
   logNameChange() {
     const nameControl = this.heroForm.get('name');
     nameControl.valueChanges.forEach(
-      (value: string) => this.nameChangeLog.push(value)
+      (value) => this.nameChangeLog.push(value)
     );
   }
 }
